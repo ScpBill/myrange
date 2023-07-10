@@ -1,6 +1,5 @@
 from __future__ import annotations
 from typing import final, Sequence, SupportsIndex, Iterator, overload
-from time import time
 
 
 @final
@@ -100,32 +99,3 @@ class myrange(Sequence[int]):
 
     def __str__(self) -> str:
         return f'{self.__class__.__name__}({self.__start}, {self.__stop}%s)' % (f', {self.__step}' if self.__step != 1 else '')
-
-
-def speedometer(func) -> None:
-    def decorator():
-        last = time()
-        func()
-        print(f'Test of {func.__name__} last for {time() - last} seconds')
-    return decorator
-
-
-@speedometer
-def test_range() -> None:
-    print(list(range(0, 10, -1)))
-    for _ in range(-1000000, 1000000, 3): pass
-    print(range(500, -300, -3)[11:-11:2])
-    print([i in range(500, -300, -3)[11:-11:2] for i in range(0, 11)])
-
-
-@speedometer
-def test_myrange() -> None:
-    print(list(myrange(0, 10, -1)))
-    for _ in myrange(-1000000, 1000000, 3): pass
-    print(myrange(500, -300, -3)[11:-11:2])
-    print([i in myrange(500, -300, -3)[11:-11:2] for i in myrange(0, 11)])
-
-
-if __name__ == '__main__':
-    test_range()
-    test_myrange()
