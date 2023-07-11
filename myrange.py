@@ -5,6 +5,9 @@ from typing import final, Sequence, SupportsIndex, Iterator, overload
 @final
 class myrange(Sequence[int]):
     """myrange(stop) -> myrange object myrange(start, stop[, step]) -> myrange object"""
+    __start: SupportsIndex
+    __stop: SupportsIndex
+    __step: SupportsIndex
 
     @property
     def start(self) -> int:
@@ -33,8 +36,8 @@ class myrange(Sequence[int]):
         """
     
     def __init__(self, __start: SupportsIndex, __stop: SupportsIndex = None, __step: SupportsIndex = 1, /) -> None:
-        self.__start = __start if __stop else 0
-        self.__stop = __stop or __start
+        self.__start = __start if __stop is not None else 0
+        self.__stop = __stop if __stop is not None else __start
         if not __step:
             raise ValueError(f'{self.__class__.__name__}() arg 3 must not be zero')
         self.__step = __step
@@ -50,7 +53,8 @@ class myrange(Sequence[int]):
     
     def __len__(self) -> int:
         """Return len(self)."""
-        return __len if (__len := (self.__stop - self.__start) // self.__step + (1 if (self.__stop - self.__start) % self.__step else 0)) > 0 else 0
+        __len = (self.__stop - self.__start) // self.__step + (1 if (self.__stop - self.__start) % self.__step else 0)
+        return __len if __len > 0 else 0
     
     def __contains__(self, __key: object) -> bool:
         """Return key in self."""
@@ -72,23 +76,28 @@ class myrange(Sequence[int]):
         """Return self[key]."""
 
     def __getitem__(self, __key: SupportsIndex | slice) -> int | myrange:
-        def __getitem(_key: int) -> int:
-            if -self.__len__() > _key >= self.__len__():
+        def __getitem(__key: int) -> int:
+            if -self.__len__() > __key >= self.__len__():
                 raise IndexError(f'{self.__class__.__name__} object index out of range')
-            if _key >= 0:
-                return self.__start + self.__step * _key
+            
+            if __key >= 0:
+                return self.__start + self.__step * __key
             else:
-                return (self.__len__() * self.__step + self.__start) + self.__step * _key
+                return (self.__len__() * self.__step + self.__start) + self.__step * __key
         
-        if isinstance(__key, int):
+        if isinstance(__key, (SupportsIndex, int)):
             return __getitem(__key)
         
+        # get slice values
         __start = __key.start or 0
-        __stop = __key.stop or -1
-        __step = __key.step or 1
+        __stop = __key.stop if __key.stop is not None else -1
+        if not (__step := __key.step if __key.step is not None else 1):
+            raise ValueError('slice step cannot be zero')
+        
         if -self.__len__() > __start >= self.__len__() or -self.__len__() > __stop >= self.__len__():
             raise IndexError(f'{self.__class__.__name__} object index out of range')
-        return myrange(__getitem(__start), __getitem(__stop), __step * self.__step)
+        
+        return myrange(__getitem(__start), __getitem(__stop), self.__step * __step)
     
     def __reversed__(self) -> Iterator[int]:
         """Return a reverse iterator."""
