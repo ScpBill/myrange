@@ -108,3 +108,21 @@ class myrange(Sequence[int]):
 
     def __str__(self) -> str:
         return f'{self.__class__.__name__}({self.__start}, {self.__stop}%s)' % (f', {self.__step}' if self.__step != 1 else '')
+
+    def __repr__(self) -> str:
+        return self.__str__()
+    
+    def __hash__(self) -> int:
+        return hash((self.__start, self.__stop, self.__step))
+    
+    def __eq__(self, __value: object) -> bool:
+        return isinstance(__value, myrange) and (  # true if object type is myrange and ...
+            (__value.__start, __value.__stop) == (self.__start, self.__stop)) and (  # ... the start and stop values are equal and ...
+            __value.__step == self.__step or __value.__len__() == self.__len__()  # ... is equal to either the step value or the length
+        )
+    
+    def __ne__(self, __value: object) -> bool:
+        return not isinstance(__value, myrange) or (  # true if object type not is myrange or ...
+            (__value.__start, __value.__stop) != (self.__start, self.__stop)) or (  # ... the start and stop values are not equal or ...
+            __value.__step != self.__step and __value.__len__() != self.__len__()  # ... the step and length values are not equal either
+        )
