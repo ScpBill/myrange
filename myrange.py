@@ -42,10 +42,12 @@ class myrange(Sequence[int]):
             raise ValueError(f'{self.__class__.__name__}() arg 3 must not be zero')
         self.__step = __step.__index__()
     
+    # TODO: its optimized method
     def count(self, __value: int, /) -> int:
         """rangeobject.count(value) -> integer -- return number of occurrences of value"""
         return super().count(__value)
     
+    # TODO: its optimized method
     def index(self, __value: int, /) -> int:
         if __value not in self:
             raise ValueError(f'{__value} is not in {self.__class__.__name__}')
@@ -56,6 +58,7 @@ class myrange(Sequence[int]):
         __len = (self.__stop - self.__start) // self.__step + (1 if (self.__stop - self.__start) % self.__step else 0)
         return __len if __len > 0 else 0
     
+    # TODO: its optimized method
     def __contains__(self, __key: object, /) -> bool:
         """Return key in self."""
         return super().__contains__(__key)
