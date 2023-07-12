@@ -46,7 +46,7 @@ class myrange(Sequence[int]):
         """rangeobject.count(value) -> integer -- return number of occurrences of value"""
         return int(__value in self)
     
-    def index(self, __value: int, /) -> int:
+    def index(self, __value: int, /) -> int:  # type: ignore[override]
         """rangeobject.index(value) -> integer -- return index of value. Raise ValueError if the value is not present."""
         if __value not in self:
             raise ValueError(f'{__value} is not in {self.__class__.__name__}')
