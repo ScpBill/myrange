@@ -1,6 +1,5 @@
 from __future__ import annotations
-from typing import final, Sequence, SupportsIndex, Iterator, overload, Literal
-from functools import singledispatch
+from typing import final, Sequence, SupportsIndex, Iterator, overload
 
 
 @final
