@@ -8,6 +8,7 @@ class myrange(Sequence[int]):
     __start: int
     __stop: int
     __step: int
+    __slots__ = ('__start', '__stop', '__step')
 
     @property
     def start(self) -> int:
